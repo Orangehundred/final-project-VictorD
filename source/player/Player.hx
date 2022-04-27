@@ -10,8 +10,8 @@ class Player extends FlxSprite
 {
 	public static var SPEED(default, never):Int = 150;
 
-	public var maxHealth:Int = 3;
-	public var damage:Int;
+	public var maxHealth:Int = 1;
+
 
 	public function new(X:Float = 0, Y:Float = 0)
 	{
