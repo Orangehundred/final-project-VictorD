@@ -19,28 +19,24 @@ class Hud extends FlxTypedGroup<FlxSprite>
 
 	public static var score:Int;
 
-	public function new(player_:Player, ?textSize:Int = 16, ?spriteSize:Int = 32)
+	public function new(player_:Player, ?textSize:Int = 20, ?spriteSize:Int = 32)
 	{
 		super();
 
 		player = player_;
+
+		//HUD Text Values
 		score = 0;
 		player.health = 1;
 
 		// Transparent black
-		background = new FlxSprite(Std.int(FlxG.width * 0.25), FlxG.height * 0.001).makeGraphic(Std.int(FlxG.width / 2), Std.int(FlxG.height / 10), 0x55000000);
+		background = new FlxSprite(Std.int(FlxG.width / 2.5), 0).makeGraphic(Std.int(FlxG.width / 5), Std.int(FlxG.height * 0.05), 0x55000000);
 
-		var spriteHeight:Float = FlxG.height - background.height;
-		// var textHeight:Float = (background.height - textSize) / 2;
-		var textHeight:Float = FlxG.height - background.height;
-		var textOffset:Float = spriteSize / 2;
-
-		livesSprite = makeSprite(livesSprite, AssetPaths.heart__png, FlxG.width / 100, spriteHeight, spriteSize);
-		livesCounter = new FlxText(livesSprite.x + livesSprite.width + textOffset, textHeight, 0, "" + player.health, textSize);
+		scoreLabel = new FlxText((FlxG.width / 2.5 + 45), FlxG.height * 0.01, "Score: ", textSize);
+		scoreCounter = new FlxText(scoreLabel.x + scoreLabel.width, FlxG.height * 0.01, 0, "" + score, textSize);
 		scoreCounter.scrollFactor.set(0, 0);
 
 		add(background);
-
 		add(scoreCounter);
 		add(scoreLabel);
 	}
@@ -51,7 +47,10 @@ class Hud extends FlxTypedGroup<FlxSprite>
 		sprite.setGraphicSize(spriteSize, spriteSize);
 		sprite.updateHitbox();
 		sprite.setPosition(spriteX, spriteHeight);
+		
+		//Lock HUD to screen
 		sprite.scrollFactor.set(0, 0);
+		
 		return sprite;
 	}
 
