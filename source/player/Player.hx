@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
-	public static var SPEED(default, never):Int = 150;
+	public static var SPEED(default, never):Int = 200;
 
 	public var maxHealth:Int = 1;
 
@@ -18,10 +18,10 @@ class Player extends FlxSprite
 		super(X, Y);
 		// makeGraphic(16, 16, FlxColor.RED);
 		loadGraphic(AssetPaths.player__png, false);
-		this.width = 60;
-		this.height = 25;
-		this.offset.x = 14;
-		this.offset.y = 2.5;
+		this.width = 50;
+		this.height = 50;
+		this.offset.x = 0;
+		this.offset.y = 0;
 		health = maxHealth;
 	}
 
@@ -34,17 +34,24 @@ class Player extends FlxSprite
 
 	private function setSpeed()
 	{
-		if (x < 4 || x > FlxG.width - width)
-		{
-			velocity.x = 0;
-		}
-
 		if (FlxG.keys.justPressed.UP)
 		{
 			velocity.y = -SPEED;
 		}
 
-		if (FlxG.keys.pressed.LEFT && x > 4)
+		if (FlxG.keys.pressed.DOWN)
+		{
+			velocity.y = SPEED;
+		}
+
+		if (x < 4 || x > FlxG.width - width)
+		{
+			velocity.x = 0;
+		}
+
+		//NO IDEA WHY I CAN'T IMPLEMENT TOP AND BOTTOM BARRIERS IN HERE
+
+		if (FlxG.keys.pressed.LEFT && x > FlxG.width - FlxG.width)
 		{
 			velocity.x = -SPEED;
 		}
@@ -54,20 +61,15 @@ class Player extends FlxSprite
 			velocity.x = SPEED;
 		}
 
-		if (FlxG.keys.pressed.DOWN)
-		{
-			velocity.y = SPEED;
-		}
-
 		if (FlxG.keys.pressed.RIGHT && FlxG.keys.pressed.LEFT)
 		{
-			// cancel out
+			// Cancel out
 			velocity.x = 0;
 		}
 
 		if (FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN)
 		{
-			// cancel out
+			// Cancel out
 			velocity.y = 0;
 		}
 

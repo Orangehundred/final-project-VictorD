@@ -14,37 +14,48 @@ import player.Player;
 
 class PlayState extends FlxState
 {
-	//Background
+	// Background
 	var backdrop:FlxBackdrop;
 
-	// Wall
+	// Top & Bottom Walls
 	var bottomWall:FlxObject;
+	var topWall:FlxObject;
 
 	// Player
-	var player:Player;	
+	var player:Player;
+	
+	// Hud
+	var hud:Hud;
 
 	override public function create()
 	{
 
-		// call super
+		// Call super
 		super.create();
 
-		// create backdrop
+		// Create backdrop
 		backdrop = new FlxBackdrop(AssetPaths.backdrop__png, 0, 1, false, true, 0, 0);
 		backdrop.velocity.set(0, 100);
 
-		// create bottom wall
-		bottomWall = new FlxObject(0, FlxG.height, FlxG.width, (FlxG.height - 10));
+		// Create Walls
+		bottomWall = new FlxObject(0, FlxG.height, FlxG.width, (FlxG.height));
 		bottomWall.immovable = true;
+		topWall = new FlxObject(0, FlxG.height - FlxG.height, FlxG.width, (FlxG.height - FlxG.height));
+		topWall.immovable = true;
 
-		// create player
+
+		// Create player
 		player = new Player(FlxG.width / 2, FlxG.height / 2);
 
-		// add elements
+		// Create HUD
+		hud = new Hud(player, 22, 22);
+
+		// Add elements
 		add(backdrop);
 		add(bottomWall);
+		add(topWall);
 		add(player);
-
+		add(hud);
 	}
 
 	// SpawnTimer of enemies, deals with just NORMY type enemies at the moment.
@@ -52,12 +63,18 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
-		// Bottom wall collision
+		// Wall collision
 		if (FlxG.collide(player, bottomWall))
 		{
 			player.velocity.y = 0;
 		}
+		
+		if (FlxG.collide(player, topWall))
+		{
+			player.velocity.y = 0;
+		}
 
+		// Press ENTER to fullscreen game window
 		if (FlxG.keys.justPressed.ENTER)
 			FlxG.fullscreen = !FlxG.fullscreen;
 	}
