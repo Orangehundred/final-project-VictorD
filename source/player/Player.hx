@@ -28,7 +28,6 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float)
 	{
 		setSpeed();
-
 		super.update(elapsed);
 	}
 
