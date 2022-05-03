@@ -25,8 +25,6 @@ class Enemy extends FlxSprite
 
     override public function revive()
     {
-        x = FlxG.random.int(250, 750);
-        y = FlxG.random.int(250, 750);
         angularVelocity = 200;
         setSpeed();
 

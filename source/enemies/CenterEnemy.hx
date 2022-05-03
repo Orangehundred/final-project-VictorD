@@ -13,7 +13,7 @@ class CenterEnemy extends Enemy
 
     public function new() {
         super();
-        color = FlxColor.BLUE;
+        makeGraphic(30, 30, FlxColor.BLUE);
     }
 
     override private function setSpeed() {
@@ -28,6 +28,6 @@ class CenterEnemy extends Enemy
     override private function shouldBeKilled() {
         var wouldParentBeKilled = super.shouldBeKilled();
         
-        return wouldParentBeKilled || overlapsPoint(centerScreen);
+        return wouldParentBeKilled || getMidpoint().distanceTo(centerScreen) < 2;//overlapsPoint(centerScreen);
     }
 }

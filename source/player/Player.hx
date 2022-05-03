@@ -1,10 +1,7 @@
 package player;
 
 import flixel.FlxG;
-import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {

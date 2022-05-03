@@ -1,5 +1,6 @@
 package;
 
+import enemies.RingEnemy;
 import enemies.CenterEnemy;
 import enemies.Enemy;
 import flixel.FlxG;
@@ -28,6 +29,11 @@ class PlayState extends FlxState
 
 	var centerEnemyGroup:FlxTypedGroup<CenterEnemy>;
 	var centerEnemySpawnTimer:Float = 0;
+	var centerEnemyCurrentAngle:Float = 0;
+	var centerPoint:FlxPoint;
+
+	var ringEnemyGroup:FlxTypedGroup<RingEnemy>;
+	var ringEnemySpawnTimer:Float = 0;
 
 	override public function create()
 	{
@@ -51,26 +57,62 @@ class PlayState extends FlxState
 
 		// Add in Enemies
 		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
-		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(30));
+		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(100));
+		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(200));
+		centerPoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
 		add(hud);
 	}
 
 	override public function update(elapsed:Float)
 	{
-		//SpawnTimer of enemies
+		// SpawnTimer of enemies
 		enemySpawnTimer += elapsed * 5;
 		if (enemySpawnTimer > 1)
 		{
 			enemySpawnTimer--;
-			enemyGroup.add(enemyGroup.recycle(Enemy.new));
+			var newEnemy:Enemy = enemyGroup.recycle(Enemy.new);
+			var spawnLocationX = FlxG.random.float(0, FlxG.width);
+			var spawnLocationY = 0;
+			newEnemy.reset(spawnLocationX, spawnLocationY);
+			enemyGroup.add(newEnemy);
+			
 		}
 
-		centerEnemySpawnTimer += elapsed * 6;
+		centerEnemySpawnTimer += elapsed * 8;
 		if (centerEnemySpawnTimer > 1)
 		{
 			centerEnemySpawnTimer--;
-			centerEnemyGroup.add(centerEnemyGroup.recycle(CenterEnemy.new));
+
+			var distanceFromMiddle:Float = 400;
+			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
+			// var randomAngle = FlxG.random.float(0, 360);
+			movingPoint.rotate(centerPoint, centerEnemyCurrentAngle);
+			centerEnemyCurrentAngle = (centerEnemyCurrentAngle + 10) % 360;
+
+			var newCenterEnemy:CenterEnemy = centerEnemyGroup.recycle(CenterEnemy.new);
+			newCenterEnemy.reset(movingPoint.x, movingPoint.y);
+			centerEnemyGroup.add(newCenterEnemy);
+		}
+
+		ringEnemySpawnTimer += elapsed;
+		if (ringEnemySpawnTimer > 1)
+		{
+			ringEnemySpawnTimer--;
+
+			var distanceFromMiddle:Float = 450;
+			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
+			var ringAngle = 30;
+			for (i in 0...12) {
+				movingPoint.rotate(centerPoint, ringAngle);
+				
+				var newRingEnemy:RingEnemy = ringEnemyGroup.recycle(RingEnemy.new);
+				var spawnLocationX:Float = movingPoint.x - (newRingEnemy.width / 2);
+				var spawnLocationY:Float = movingPoint.y - (newRingEnemy.height / 2);
+				newRingEnemy.reset(spawnLocationX, spawnLocationY);
+				ringEnemyGroup.add(newRingEnemy);
+			}
+			
 		}
 		
 		// Math for moving towards
