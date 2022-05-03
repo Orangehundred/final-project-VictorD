@@ -13,7 +13,8 @@ class CenterEnemy extends Enemy
 
     public function new() {
         super();
-        makeGraphic(30, 30, FlxColor.BLUE);
+
+		loadGraphic(AssetPaths.centerEnemy__png, false);
     }
 
     override private function setSpeed() {
@@ -23,6 +24,7 @@ class CenterEnemy extends Enemy
     override function revive() {
         centerScreen.set(FlxG.width / 2, FlxG.height / 2);
         super.revive();
+
     }
 
     override private function shouldBeKilled() {

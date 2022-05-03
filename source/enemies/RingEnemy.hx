@@ -9,7 +9,12 @@ class RingEnemy extends CenterEnemy {
 
     public function new() {
         super();
-        makeGraphic(30, 30, FlxColor.YELLOW);
+		loadGraphic(AssetPaths.ringEnemy__png, false);
+    }
+
+    override function revive() {
+        super.revive();
+        angularVelocity = 300;
     }
 
     override private function setSpeed() {

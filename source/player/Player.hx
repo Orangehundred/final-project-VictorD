@@ -62,4 +62,6 @@ class Player extends FlxSprite
 	{
 		health -= 1;
 	}
+
+	//ADD DODGE FUNCTION?
 }

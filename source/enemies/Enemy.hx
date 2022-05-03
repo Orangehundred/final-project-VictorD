@@ -27,8 +27,6 @@ class Enemy extends FlxSprite
     {
         angularVelocity = 200;
         setSpeed();
-
-        //PLAN TO IMPLEMENT FOR LOOP THAT SPAWNS ENEMIES IN A CIRCLE AROUND CENTER POINT
         
         super.revive();
     }
