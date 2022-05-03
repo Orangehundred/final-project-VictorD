@@ -23,6 +23,9 @@ class PlayState extends FlxState
 	// Hud
 	var hud:Hud;
 
+	// Gameover variable
+	var gameOver:Bool = false;
+
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
 	var enemySpawnTimer:Float = 0;
@@ -84,7 +87,7 @@ class PlayState extends FlxState
 		{
 			centerEnemySpawnTimer--;
 
-			var distanceFromMiddle:Float = 400;
+			var distanceFromMiddle:Float = 450;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
 			// var randomAngle = FlxG.random.float(0, 360);
 			movingPoint.rotate(centerPoint, centerEnemyCurrentAngle);
@@ -100,7 +103,7 @@ class PlayState extends FlxState
 		{
 			ringEnemySpawnTimer--;
 
-			var distanceFromMiddle:Float = 450;
+			var distanceFromMiddle:Float = 500;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
 			var ringAngle = 30;
 			for (i in 0...12) {
@@ -114,32 +117,13 @@ class PlayState extends FlxState
 			}
 			
 		}
-		
-		// Math for moving towards
-		//if (FlxMath.inBounds(center.x, 0, FlxG.width)
-		//	&& FlxMath.inBounds(center.y, 0, FlxG.height))
-		//{
-		//	if (FlxMath.isDistanceWithin(center, 10))
-		//	{
-		//		target.velocity.set();
-		//	}
-		//	else
-		//		FlxVelocity.moveTowardsObject(center, 100);
 
-		//	if (FlxMath.isDistanceWithin(enemy, center, 10))
-		//	{
-		//		enemy.velocity.set();
-		//	}
-		//	else
-		//		FlxVelocity.moveTowardsObject(enemy, center, 20);
-		//}
-		//else
-		//	center.velocity.set();
+		if (gameOver = false)
+		{
+			hud.addScore(1);
+		}
 
 		super.update(elapsed);
-
-		//Center colliding with enemy
-		//FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
 
 		//ENEMIES COLLIDE WITH PLAYER AS WELL??
 
