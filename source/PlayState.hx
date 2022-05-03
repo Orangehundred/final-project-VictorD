@@ -1,5 +1,6 @@
 package;
 
+import enemies.CenterEnemy;
 import enemies.Enemy;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -7,9 +8,7 @@ import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.addons.display.FlxBackdrop;
 import player.Player;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
 
 
 class PlayState extends FlxState
@@ -17,23 +16,18 @@ class PlayState extends FlxState
 	// Background
 	var backdrop:FlxBackdrop;
 
-	// Top & Bottom Walls
-	var bottomWall:FlxObject;
-	var topWall:FlxObject;
-
 	// Player
 	var player:Player;
 	
 	// Hud
 	var hud:Hud;
 
-	// Centerpoint of screen
-	var center:FlxObject;
-	public var midpoint:FlxPoint;
-
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
-	var spawnTimer:Float = 0;
+	var enemySpawnTimer:Float = 0;
+
+	var centerEnemyGroup:FlxTypedGroup<CenterEnemy>;
+	var centerEnemySpawnTimer:Float = 0;
 
 	override public function create()
 	{
@@ -45,17 +39,6 @@ class PlayState extends FlxState
 		backdrop = new FlxBackdrop(AssetPaths.backdrop__png, 0, 1, false, true, 0, 0);
 		backdrop.velocity.set(0, 100);
 
-		// Create Center object
-		var center = new FlxObject(FlxG.width / 2 - 75, FlxG.height / 2 - 75, 75, 75);
-		midpoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
-
-		// Create Walls
-		bottomWall = new FlxObject(0, FlxG.height, FlxG.width, (FlxG.height));
-		bottomWall.immovable = true;
-		topWall = new FlxObject(0, FlxG.height - FlxG.height, FlxG.width, (FlxG.height - FlxG.height));
-		topWall.immovable = true;
-
-
 		// Create player
 		player = new Player(FlxG.width / 2, FlxG.height / 2);
 
@@ -64,13 +47,11 @@ class PlayState extends FlxState
 
 		// Add elements
 		add(backdrop);
-		add(center);
-		add(bottomWall);
-		add(topWall);
 		add(player);
 
 		// Add in Enemies
 		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
+		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(30));
 
 		add(hud);
 	}
@@ -78,11 +59,18 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		//SpawnTimer of enemies
-		spawnTimer += elapsed * 5;
-		if (spawnTimer > 1)
+		enemySpawnTimer += elapsed * 5;
+		if (enemySpawnTimer > 1)
 		{
-			spawnTimer--;
+			enemySpawnTimer--;
 			enemyGroup.add(enemyGroup.recycle(Enemy.new));
+		}
+
+		centerEnemySpawnTimer += elapsed * 6;
+		if (centerEnemySpawnTimer > 1)
+		{
+			centerEnemySpawnTimer--;
+			centerEnemyGroup.add(centerEnemyGroup.recycle(CenterEnemy.new));
 		}
 		
 		// Math for moving towards
@@ -107,17 +95,6 @@ class PlayState extends FlxState
 		//	center.velocity.set();
 
 		super.update(elapsed);
-		
-		// Wall collision
-		if (FlxG.collide(player, bottomWall))
-		{
-			player.velocity.y = 0;
-		}
-		
-		if (FlxG.collide(player, topWall))
-		{
-			player.velocity.y = 0;
-		}
 
 		//Center colliding with enemy
 		//FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
