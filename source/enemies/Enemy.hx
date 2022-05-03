@@ -1,5 +1,6 @@
 package enemies;
 
+import flixel.math.FlxVelocity;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -20,8 +21,10 @@ class Enemy extends FlxSprite
     {
         x = FlxG.random.int(250, 750);
         y = FlxG.random.int(250, 750);
-        velocity.x = 150;
-        velocity.y = 150;
+        // velocity.x = 150;
+        // velocity.y = 150;
+        var state:PlayState = cast (FlxG.state, PlayState);
+        FlxVelocity.moveTowardsPoint(this, state.midpoint, 150);
         angularVelocity = 200;
 
         //PLAN TO IMPLEMENT FOR LOOP THAT SPAWNS ENEMIES IN A CIRCLE AROUND CENTER POINT
@@ -31,11 +34,13 @@ class Enemy extends FlxSprite
 
     override public function update(elapsed:Float)
     {
-	if (movedOffScreenY() && movedOffScreenX())
-    {
-        kill();
-    }
-    super.update(elapsed);
+        var state:PlayState = cast (FlxG.state, PlayState);
+        if (!isOnScreen() || overlapsPoint(state.midpoint)) // Replace this with !isOnScreen()
+        {
+            kill();
+        }
+
+        super.update(elapsed);
     }
 
     // Returns value of off Y axis of screen

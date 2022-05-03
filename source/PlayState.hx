@@ -29,6 +29,7 @@ class PlayState extends FlxState
 
 	// Centerpoint of screen
 	var center:FlxObject;
+	public var midpoint:FlxPoint;
 
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
@@ -46,6 +47,7 @@ class PlayState extends FlxState
 
 		// Create Center object
 		var center = new FlxObject(FlxG.width / 2 - 75, FlxG.height / 2 - 75, 75, 75);
+		midpoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
 		// Create Walls
 		bottomWall = new FlxObject(0, FlxG.height, FlxG.width, (FlxG.height));
@@ -118,7 +120,7 @@ class PlayState extends FlxState
 		}
 
 		//Center colliding with enemy
-		FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
+		//FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
 
 		//ENEMIES COLLIDE WITH PLAYER AS WELL??
 
