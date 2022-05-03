@@ -1,5 +1,7 @@
 package;
 
+import enemies.RingEnemy;
+import enemies.CenterEnemy;
 import enemies.Enemy;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -7,9 +9,7 @@ import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.addons.display.FlxBackdrop;
 import player.Player;
-import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
 
 
 class PlayState extends FlxState
@@ -17,22 +17,23 @@ class PlayState extends FlxState
 	// Background
 	var backdrop:FlxBackdrop;
 
-	// Top & Bottom Walls
-	var bottomWall:FlxObject;
-	var topWall:FlxObject;
-
 	// Player
 	var player:Player;
 	
 	// Hud
 	var hud:Hud;
 
-	// Centerpoint of screen
-	var center:FlxObject;
-
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
-	var spawnTimer:Float = 0;
+	var enemySpawnTimer:Float = 0;
+
+	var centerEnemyGroup:FlxTypedGroup<CenterEnemy>;
+	var centerEnemySpawnTimer:Float = 0;
+	var centerEnemyCurrentAngle:Float = 0;
+	var centerPoint:FlxPoint;
+
+	var ringEnemyGroup:FlxTypedGroup<RingEnemy>;
+	var ringEnemySpawnTimer:Float = 0;
 
 	override public function create()
 	{
@@ -44,16 +45,6 @@ class PlayState extends FlxState
 		backdrop = new FlxBackdrop(AssetPaths.backdrop__png, 0, 1, false, true, 0, 0);
 		backdrop.velocity.set(0, 100);
 
-		// Create Center object
-		var center = new FlxObject(FlxG.width / 2 - 75, FlxG.height / 2 - 75, 75, 75);
-
-		// Create Walls
-		bottomWall = new FlxObject(0, FlxG.height, FlxG.width, (FlxG.height));
-		bottomWall.immovable = true;
-		topWall = new FlxObject(0, FlxG.height - FlxG.height, FlxG.width, (FlxG.height - FlxG.height));
-		topWall.immovable = true;
-
-
 		// Create player
 		player = new Player(FlxG.width / 2, FlxG.height / 2);
 
@@ -62,25 +53,66 @@ class PlayState extends FlxState
 
 		// Add elements
 		add(backdrop);
-		add(center);
-		add(bottomWall);
-		add(topWall);
 		add(player);
 
 		// Add in Enemies
 		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
+		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(100));
+		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(200));
+		centerPoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
 		add(hud);
 	}
 
 	override public function update(elapsed:Float)
 	{
-		//SpawnTimer of enemies
-		spawnTimer += elapsed * 5;
-		if (spawnTimer > 1)
+		// SpawnTimer of enemies
+		enemySpawnTimer += elapsed * 5;
+		if (enemySpawnTimer > 1)
 		{
-			spawnTimer--;
-			enemyGroup.add(enemyGroup.recycle(Enemy.new));
+			enemySpawnTimer--;
+			var newEnemy:Enemy = enemyGroup.recycle(Enemy.new);
+			var spawnLocationX = FlxG.random.float(0, FlxG.width);
+			var spawnLocationY = 0;
+			newEnemy.reset(spawnLocationX, spawnLocationY);
+			enemyGroup.add(newEnemy);
+			
+		}
+
+		centerEnemySpawnTimer += elapsed * 8;
+		if (centerEnemySpawnTimer > 1)
+		{
+			centerEnemySpawnTimer--;
+
+			var distanceFromMiddle:Float = 400;
+			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
+			// var randomAngle = FlxG.random.float(0, 360);
+			movingPoint.rotate(centerPoint, centerEnemyCurrentAngle);
+			centerEnemyCurrentAngle = (centerEnemyCurrentAngle + 10) % 360;
+
+			var newCenterEnemy:CenterEnemy = centerEnemyGroup.recycle(CenterEnemy.new);
+			newCenterEnemy.reset(movingPoint.x, movingPoint.y);
+			centerEnemyGroup.add(newCenterEnemy);
+		}
+
+		ringEnemySpawnTimer += elapsed;
+		if (ringEnemySpawnTimer > 1)
+		{
+			ringEnemySpawnTimer--;
+
+			var distanceFromMiddle:Float = 450;
+			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
+			var ringAngle = 30;
+			for (i in 0...12) {
+				movingPoint.rotate(centerPoint, ringAngle);
+				
+				var newRingEnemy:RingEnemy = ringEnemyGroup.recycle(RingEnemy.new);
+				var spawnLocationX:Float = movingPoint.x - (newRingEnemy.width / 2);
+				var spawnLocationY:Float = movingPoint.y - (newRingEnemy.height / 2);
+				newRingEnemy.reset(spawnLocationX, spawnLocationY);
+				ringEnemyGroup.add(newRingEnemy);
+			}
+			
 		}
 		
 		// Math for moving towards
@@ -105,20 +137,9 @@ class PlayState extends FlxState
 		//	center.velocity.set();
 
 		super.update(elapsed);
-		
-		// Wall collision
-		if (FlxG.collide(player, bottomWall))
-		{
-			player.velocity.y = 0;
-		}
-		
-		if (FlxG.collide(player, topWall))
-		{
-			player.velocity.y = 0;
-		}
 
 		//Center colliding with enemy
-		FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
+		//FlxG.overlap(center, enemyGroup, Enemy.overlapsWithCenter);
 
 		//ENEMIES COLLIDE WITH PLAYER AS WELL??
 

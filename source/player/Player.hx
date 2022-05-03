@@ -1,10 +1,7 @@
 package player;
 
 import flixel.FlxG;
-import flixel.system.FlxAssets.FlxGraphicAsset;
-import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
@@ -28,57 +25,35 @@ class Player extends FlxSprite
 	override public function update(elapsed:Float)
 	{
 		setSpeed();
+		stopIfGoingOffScreen();
+
 		super.update(elapsed);
 	}
 
 	private function setSpeed()
 	{
-		if (FlxG.keys.justPressed.UP)
-		{
-			velocity.y = -SPEED;
-		}
+		var verticalDirection = 0;
+		verticalDirection += FlxG.keys.pressed.UP ? -1 : 0;
+		verticalDirection += FlxG.keys.pressed.DOWN ? 1 : 0;
+	
+		var horizontalDirection = 0;
+		horizontalDirection += FlxG.keys.pressed.LEFT ? -1 : 0;
+		horizontalDirection += FlxG.keys.pressed.RIGHT ? 1 : 0;
 
-		if (FlxG.keys.pressed.DOWN)
-		{
-			velocity.y = SPEED;
-		}
+		velocity.set(SPEED * horizontalDirection, SPEED * verticalDirection);
+	}
 
-		if (x < 4 || x > FlxG.width - width)
-		{
+	private function stopIfGoingOffScreen() 
+	{
+		var isGoingOffScreenLeft = FlxG.keys.pressed.LEFT && x < 0;
+		var isGoingOffScreenRight = FlxG.keys.pressed.RIGHT && x > FlxG.width - width;
+		if (isGoingOffScreenLeft || isGoingOffScreenRight) {
 			velocity.x = 0;
 		}
-
-		//NO IDEA WHY I CAN'T IMPLEMENT TOP AND BOTTOM BARRIERS IN HERE
-
-		if (FlxG.keys.pressed.LEFT && x > FlxG.width - FlxG.width)
-		{
-			velocity.x = -SPEED;
-		}
-
-		if (FlxG.keys.pressed.RIGHT && x < FlxG.width - width)
-		{
-			velocity.x = SPEED;
-		}
-
-		if (FlxG.keys.pressed.RIGHT && FlxG.keys.pressed.LEFT)
-		{
-			// Cancel out
-			velocity.x = 0;
-		}
-
-		if (FlxG.keys.pressed.UP && FlxG.keys.pressed.DOWN)
-		{
-			// Cancel out
-			velocity.y = 0;
-		}
-
-		if (FlxG.keys.justReleased.LEFT || FlxG.keys.justReleased.RIGHT)
-		{
-			velocity.x = 0;
-		}
-
-		if (FlxG.keys.justReleased.UP || FlxG.keys.justReleased.DOWN)
-		{
+		
+		var isGoingOffScreenTop = FlxG.keys.pressed.UP && y < 0;
+		var isGoingOffScreenBottom = FlxG.keys.pressed.DOWN && y > FlxG.height - height;
+		if (isGoingOffScreenTop || isGoingOffScreenBottom) {
 			velocity.y = 0;
 		}
 	}
