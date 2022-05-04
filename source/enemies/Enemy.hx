@@ -19,7 +19,6 @@ class Enemy extends FlxSprite
     } 
 
     private function setSpeed() {
-        velocity.x = 150;
         velocity.y = 150;
     }
 

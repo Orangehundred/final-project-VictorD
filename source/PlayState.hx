@@ -38,6 +38,8 @@ class PlayState extends FlxState
 	var ringEnemyGroup:FlxTypedGroup<RingEnemy>;
 	var ringEnemySpawnTimer:Float = 0;
 
+	var gameTimer:Float = 0;
+
 	override public function create()
 	{
 
@@ -60,8 +62,8 @@ class PlayState extends FlxState
 
 		// Add in Enemies
 		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
-		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(100));
-		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(200));
+		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(60));
+		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(100));
 		centerPoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
 		add(hud);
@@ -70,7 +72,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		// SpawnTimer of enemies
-		enemySpawnTimer += elapsed * 5;
+		enemySpawnTimer += elapsed * 3;
 		if (enemySpawnTimer > 1)
 		{
 			enemySpawnTimer--;
@@ -83,7 +85,7 @@ class PlayState extends FlxState
 		}
 
 		centerEnemySpawnTimer += elapsed * 8;
-		if (centerEnemySpawnTimer > 1)
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 100)
 		{
 			centerEnemySpawnTimer--;
 
@@ -118,8 +120,10 @@ class PlayState extends FlxState
 			
 		}
 
-		if (gameOver = false)
+		gameTimer += elapsed;
+		if (gameTimer > 1)
 		{
+			gameTimer--;
 			hud.addScore(1);
 		}
 
@@ -129,6 +133,21 @@ class PlayState extends FlxState
 
 		// Press ENTER to fullscreen game window
 		if (FlxG.keys.justPressed.ENTER)
+		{
 			FlxG.fullscreen = !FlxG.fullscreen;
+		}
+
+		// End the game if the player reaches 0 lives or health
+		if (player.health <= 0)
+			{
+				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
+	
+				gameOver = true;
+				{
+					//FlxG.switchState(new GameOverState());
+				}
+			}		
+
+	
 	}
 }
