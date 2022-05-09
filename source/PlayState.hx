@@ -10,6 +10,7 @@ import flixel.FlxObject;
 import flixel.addons.display.FlxBackdrop;
 import player.Player;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 
 class PlayState extends FlxState
@@ -17,14 +18,17 @@ class PlayState extends FlxState
 	// Background
 	var backdrop:FlxBackdrop;
 
+	 var _UiManager:Hud;
+
 	// Player
 	var player:Player;
 	
 	// Hud
 	var hud:Hud;
 
-	// Gameover variable
-	var gameOver:Bool = false;
+	// Gameover & GameStart variable
+	var _gameStarted:Bool = false;
+	var _gameOver:Bool = false;
 
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
@@ -42,6 +46,11 @@ class PlayState extends FlxState
 
 	override public function create()
 	{
+		// Hide Cursor
+		FlxG.mouse.visible = false;
+
+		_UiManager = new Hud(player);
+		add(_UiManager.uiInitialMenu);
 
 		// Call super
 		super.create();
@@ -69,6 +78,23 @@ class PlayState extends FlxState
 		add(hud);
 	}
 
+	private function startGame()
+		{
+			_UiManager.hideInitialMenu();
+			_gameStarted = true;
+		}
+		
+		public function gameOver()
+		{
+			FlxG.camera.flash(FlxColor.WHITE, .2);
+			FlxG.camera.shake(0.01, 0.2);
+			add(_UiManager.uiGameOver);
+			
+			player.kill();
+	
+			_gameOver = true;
+		}
+
 	override public function update(elapsed:Float)
 	{
 		// SpawnTimer of enemies
@@ -85,7 +111,7 @@ class PlayState extends FlxState
 		}
 
 		centerEnemySpawnTimer += elapsed * 8;
-		if (centerEnemySpawnTimer > 1 && Hud.score >= 200)
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 150)
 		{
 			centerEnemySpawnTimer--;
 
@@ -132,8 +158,17 @@ class PlayState extends FlxState
 
 		super.update(elapsed);
 
-		//ENEMIES COLLIDE WITH PLAYER AS WELL??
-
+		if (!_gameStarted)
+			{
+				if (FlxG.keys.anyPressed([W, A, S, D, UP, DOWN, LEFT, RIGHT, SPACE]))
+					startGame();
+			}
+			else if (_gameOver)
+			{
+				if (FlxG.keys.anyPressed([R]))
+				{
+					FlxG.resetState();
+				}
 		// Press ENTER to fullscreen game window
 		if (FlxG.keys.justPressed.ENTER)
 		{
@@ -144,7 +179,7 @@ class PlayState extends FlxState
 		if (player.health <= 0)
 			{
 				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
-				gameOver = true;
+				_gameOver = true;
 				player.kill();
 				{
 					//FlxG.switchState(new GameOverState());
@@ -152,5 +187,6 @@ class PlayState extends FlxState
 			}		
 
 	
+		}
 	}
 }
