@@ -23,22 +23,22 @@ class Hud extends FlxTypedGroup<FlxSprite>
 
 	public static var score:Int;
 
-	public function new(player_:Player, ?textSize:Int = 20, ?spriteSize:Int = 32)
+	public function new(outsidePlayer:Player, ?textSize:Int = 20, ?spriteSize:Int = 32)
 	{
 		super();
 
 		uiInitialMenu = new FlxTypedGroup<FlxText>();
 		uiGameOver = new FlxTypedGroup<FlxText>();
 
+		player = outsidePlayer; //Saves "outsidePlayer" into "player"
+
 		setUpInitialMenu(player);
-		
-		player = player_;
 
 		//HUD Text Values
 		score = 0;
 		player.health = 1;
 
-		// Transparent black
+		// Transparent black box around Score
 		background = new FlxSprite(Std.int(FlxG.width / 2.5), 0).makeGraphic(Std.int(FlxG.width / 5), Std.int(FlxG.height * 0.05), 0x55000000);
 
 		scoreLabel = new FlxText((FlxG.width / 2.5 + 45), FlxG.height * 0.01, "Score: ", textSize);
@@ -55,16 +55,16 @@ class Hud extends FlxTypedGroup<FlxSprite>
 	// Main Menu Overlay
 	public function setUpInitialMenu(player:Player):Void
 	{
-		var titleText = new FlxText(0, 25, 0, "BULLETHELL GAME", 48);
+		var titleText = new FlxText(0, 65, 0, "BULLETHELL GAME", 48);
 		titleText.x = FlxG.width / 2 - titleText.width / 2;
 		uiInitialMenu.add(titleText);
 		
-		var byLine = new FlxText(0, 68, 0, "by Victor Duchscherer", 12);
+		var byLine = new FlxText(0, 150, 0, "by Victor Duchscherer", 20);
 		byLine.x = FlxG.width / 2 - byLine.width / 2;
 		uiInitialMenu.add(byLine);
 		
 		
-		var center = player.getMidpoint(); //WHY IS .getMidpoint INVALID FIELD ACCESS?
+		var center = player.getMidpoint();
 		
 		var up  	= new FlxText(center.x, center.y - 92, "UP", 18);
 		var down 	= new FlxText(center.x, center.y + 64, "DOWN", 18);

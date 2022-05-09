@@ -18,8 +18,6 @@ class PlayState extends FlxState
 	// Background
 	var backdrop:FlxBackdrop;
 
-	 var _UiManager:Hud;
-
 	// Player
 	var player:Player;
 	
@@ -49,9 +47,6 @@ class PlayState extends FlxState
 		// Hide Cursor
 		FlxG.mouse.visible = false;
 
-		_UiManager = new Hud(player);
-		add(_UiManager.uiInitialMenu);
-
 		// Call super
 		super.create();
 
@@ -70,17 +65,18 @@ class PlayState extends FlxState
 		add(player);
 
 		// Add in Enemies
-		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
+		add(enemyGroup = new FlxTypedGroup<Enemy>(30));
 		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(60));
 		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(100));
 		centerPoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
+		add(hud.uiInitialMenu);
 		add(hud);
 	}
 
 	private function startGame()
 		{
-			_UiManager.hideInitialMenu();
+			hud.hideInitialMenu();
 			_gameStarted = true;
 		}
 		
@@ -88,7 +84,7 @@ class PlayState extends FlxState
 		{
 			FlxG.camera.flash(FlxColor.WHITE, .2);
 			FlxG.camera.shake(0.01, 0.2);
-			add(_UiManager.uiGameOver);
+			add(hud.uiGameOver);
 			
 			player.kill();
 	
@@ -99,21 +95,21 @@ class PlayState extends FlxState
 	{
 		// SpawnTimer of enemies
 		enemySpawnTimer += elapsed * 3;
-		if (enemySpawnTimer > 1  && Hud.score >= 50)
+		if (enemySpawnTimer > 1  && Hud.score >= 20)
 		{
-			enemySpawnTimer--;
+			enemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
+
 			var newEnemy:Enemy = enemyGroup.recycle(Enemy.new);
 			var spawnLocationX = FlxG.random.float(0, FlxG.width);
 			var spawnLocationY = 0;
 			newEnemy.reset(spawnLocationX, spawnLocationY);
 			enemyGroup.add(newEnemy);
-			
 		}
 
-		centerEnemySpawnTimer += elapsed * 8;
-		if (centerEnemySpawnTimer > 1 && Hud.score >= 150)
+		centerEnemySpawnTimer += elapsed * 2;
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 125)
 		{
-			centerEnemySpawnTimer--;
+			centerEnemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
 
 			var distanceFromMiddle:Float = 450;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
@@ -127,9 +123,9 @@ class PlayState extends FlxState
 		}
 
 		ringEnemySpawnTimer += elapsed * 0.2;
-		if (ringEnemySpawnTimer > 1)
+		if (ringEnemySpawnTimer > 1 && Hud.score >= 5)
 		{
-			ringEnemySpawnTimer--;
+			ringEnemySpawnTimer = 0;
 
 			var distanceFromMiddle:Float = 500;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
@@ -149,12 +145,15 @@ class PlayState extends FlxState
 		FlxG.overlap(player, centerEnemyGroup, CenterEnemy.overlapsWithPlayer);
 		FlxG.overlap(player, enemyGroup, Enemy.overlapsWithPlayer);
 		
-		gameTimer += elapsed * 1;
-		if (gameTimer > 1)
-		{
-			gameTimer--;
-			hud.addScore(1);
-		}
+		if (_gameStarted)
+			{
+			gameTimer += elapsed * 1;
+				if (gameTimer > 1)
+				{
+					gameTimer--;
+					hud.addScore(1);
+				}
+			}
 
 		super.update(elapsed);
 
