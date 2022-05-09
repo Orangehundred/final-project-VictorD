@@ -73,7 +73,7 @@ class PlayState extends FlxState
 	{
 		// SpawnTimer of enemies
 		enemySpawnTimer += elapsed * 3;
-		if (enemySpawnTimer > 1)
+		if (enemySpawnTimer > 1  && Hud.score >= 50)
 		{
 			enemySpawnTimer--;
 			var newEnemy:Enemy = enemyGroup.recycle(Enemy.new);
@@ -85,7 +85,7 @@ class PlayState extends FlxState
 		}
 
 		centerEnemySpawnTimer += elapsed * 8;
-		if (centerEnemySpawnTimer > 1 && Hud.score >= 100)
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 200)
 		{
 			centerEnemySpawnTimer--;
 
@@ -100,7 +100,7 @@ class PlayState extends FlxState
 			centerEnemyGroup.add(newCenterEnemy);
 		}
 
-		ringEnemySpawnTimer += elapsed;
+		ringEnemySpawnTimer += elapsed * 0.2;
 		if (ringEnemySpawnTimer > 1)
 		{
 			ringEnemySpawnTimer--;
@@ -119,8 +119,11 @@ class PlayState extends FlxState
 			}
 			
 		}
-
-		gameTimer += elapsed;
+		FlxG.overlap(player, ringEnemyGroup, RingEnemy.overlapsWithPlayer);
+		FlxG.overlap(player, centerEnemyGroup, CenterEnemy.overlapsWithPlayer);
+		FlxG.overlap(player, enemyGroup, Enemy.overlapsWithPlayer);
+		
+		gameTimer += elapsed * 1;
 		if (gameTimer > 1)
 		{
 			gameTimer--;
@@ -141,8 +144,8 @@ class PlayState extends FlxState
 		if (player.health <= 0)
 			{
 				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
-	
 				gameOver = true;
+				player.kill();
 				{
 					//FlxG.switchState(new GameOverState());
 				}
