@@ -10,6 +10,7 @@ import flixel.FlxObject;
 import flixel.addons.display.FlxBackdrop;
 import player.Player;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 
 class PlayState extends FlxState
@@ -23,8 +24,9 @@ class PlayState extends FlxState
 	// Hud
 	var hud:Hud;
 
-	// Gameover variable
-	var gameOver:Bool = false;
+	// Gameover & GameStart variable
+	var _gameStarted:Bool = false;
+	var _gameOver:Bool = false;
 
 	// Enemies
 	var enemyGroup:FlxTypedGroup<Enemy>;
@@ -42,6 +44,8 @@ class PlayState extends FlxState
 
 	override public function create()
 	{
+		// Hide Cursor
+		FlxG.mouse.visible = false;
 
 		// Call super
 		super.create();
@@ -61,33 +65,51 @@ class PlayState extends FlxState
 		add(player);
 
 		// Add in Enemies
-		add(enemyGroup = new FlxTypedGroup<Enemy>(20));
+		add(enemyGroup = new FlxTypedGroup<Enemy>(30));
 		add(centerEnemyGroup = new FlxTypedGroup<CenterEnemy>(60));
 		add(ringEnemyGroup = new FlxTypedGroup<RingEnemy>(100));
 		centerPoint = new FlxPoint(FlxG.width / 2, FlxG.height / 2);
 
+		add(hud.uiInitialMenu);
 		add(hud);
 	}
+
+	private function startGame()
+		{
+			hud.hideInitialMenu();
+			_gameStarted = true;
+		}
+		
+		public function gameOver()
+		{
+			FlxG.camera.flash(FlxColor.WHITE, .2);
+			FlxG.camera.shake(0.01, 0.2);
+			add(hud.uiGameOver);
+			
+			player.kill();
+	
+			_gameOver = true;
+		}
 
 	override public function update(elapsed:Float)
 	{
 		// SpawnTimer of enemies
 		enemySpawnTimer += elapsed * 3;
-		if (enemySpawnTimer > 1)
+		if (enemySpawnTimer > 1  && Hud.score >= 20)
 		{
-			enemySpawnTimer--;
+			enemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
+
 			var newEnemy:Enemy = enemyGroup.recycle(Enemy.new);
 			var spawnLocationX = FlxG.random.float(0, FlxG.width);
 			var spawnLocationY = 0;
 			newEnemy.reset(spawnLocationX, spawnLocationY);
 			enemyGroup.add(newEnemy);
-			
 		}
 
-		centerEnemySpawnTimer += elapsed * 8;
-		if (centerEnemySpawnTimer > 1 && Hud.score >= 100)
+		centerEnemySpawnTimer += elapsed * 2;
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 125)
 		{
-			centerEnemySpawnTimer--;
+			centerEnemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
 
 			var distanceFromMiddle:Float = 450;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
@@ -100,10 +122,10 @@ class PlayState extends FlxState
 			centerEnemyGroup.add(newCenterEnemy);
 		}
 
-		ringEnemySpawnTimer += elapsed;
-		if (ringEnemySpawnTimer > 1)
+		ringEnemySpawnTimer += elapsed * 0.2;
+		if (ringEnemySpawnTimer > 1 && Hud.score >= 5)
 		{
-			ringEnemySpawnTimer--;
+			ringEnemySpawnTimer = 0;
 
 			var distanceFromMiddle:Float = 500;
 			var movingPoint = new FlxPoint(centerPoint.x + distanceFromMiddle, centerPoint.y);
@@ -119,18 +141,33 @@ class PlayState extends FlxState
 			}
 			
 		}
-
-		gameTimer += elapsed;
-		if (gameTimer > 1)
-		{
-			gameTimer--;
-			hud.addScore(1);
-		}
+		FlxG.overlap(player, ringEnemyGroup, RingEnemy.overlapsWithPlayer);
+		FlxG.overlap(player, centerEnemyGroup, CenterEnemy.overlapsWithPlayer);
+		FlxG.overlap(player, enemyGroup, Enemy.overlapsWithPlayer);
+		
+		if (_gameStarted)
+			{
+			gameTimer += elapsed * 1;
+				if (gameTimer > 1)
+				{
+					gameTimer--;
+					hud.addScore(1);
+				}
+			}
 
 		super.update(elapsed);
 
-		//ENEMIES COLLIDE WITH PLAYER AS WELL??
-
+		if (!_gameStarted)
+			{
+				if (FlxG.keys.anyPressed([W, A, S, D, UP, DOWN, LEFT, RIGHT, SPACE]))
+					startGame();
+			}
+			else if (_gameOver)
+			{
+				if (FlxG.keys.anyPressed([R]))
+				{
+					FlxG.resetState();
+				}
 		// Press ENTER to fullscreen game window
 		if (FlxG.keys.justPressed.ENTER)
 		{
@@ -141,13 +178,14 @@ class PlayState extends FlxState
 		if (player.health <= 0)
 			{
 				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
-	
-				gameOver = true;
+				_gameOver = true;
+				player.kill();
 				{
 					//FlxG.switchState(new GameOverState());
 				}
 			}		
 
 	
+		}
 	}
 }

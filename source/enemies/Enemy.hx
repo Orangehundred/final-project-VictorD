@@ -5,6 +5,7 @@ import flixel.math.FlxVelocity;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import player.Player;
 
 
 class Enemy extends FlxSprite
@@ -49,4 +50,11 @@ class Enemy extends FlxSprite
     {
 		enemy.kill();
     }
+
+    public static function overlapsWithPlayer(player:FlxObject, enemy:Enemy)
+        {
+            player.hurt(1);
+            enemy.kill();
+            //FlxG.sound.play(AssetPaths.PlayerHurt__wav, .80);
+        }
 }
