@@ -3,6 +3,8 @@ package;
 import enemies.RingEnemy;
 import enemies.CenterEnemy;
 import enemies.Enemy;
+import enemies.RingEnemy;
+import enemies.CenterEnemy;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
@@ -55,7 +57,7 @@ class PlayState extends FlxState
 		backdrop.velocity.set(0, 100);
 
 		// Create player
-		player = new Player(FlxG.width / 2, FlxG.height / 2);
+		player = new Player(FlxG.width / 2 - 25, FlxG.height / 2);
 
 		// Create HUD
 		hud = new Hud(player, 22, 22);
@@ -82,7 +84,7 @@ class PlayState extends FlxState
 		
 		public function gameOver()
 		{
-			FlxG.camera.flash(FlxColor.WHITE, .2);
+			FlxG.camera.flash(FlxColor.RED, .2);
 			FlxG.camera.shake(0.01, 0.2);
 			add(hud.uiGameOver);
 			
@@ -178,14 +180,11 @@ class PlayState extends FlxState
 		if (player.health <= 0)
 			{
 				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
-				_gameOver = true;
-				player.kill();
-				{
-					//FlxG.switchState(new GameOverState());
-				}
-			}		
 
-	
+				_gameOver = true;
+
+				FlxG.switchState(new GameOverState());
+			}		
 		}
 	}
 }

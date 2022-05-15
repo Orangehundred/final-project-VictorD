@@ -49,7 +49,6 @@ class Hud extends FlxTypedGroup<FlxSprite>
 		add(scoreCounter);
 		add(scoreLabel);
 
-		setUpGameOver();
 	}
 
 	// Main Menu Overlay
@@ -94,17 +93,6 @@ class Hud extends FlxTypedGroup<FlxSprite>
 			uiInitialMenu.forEach(exitAnim);
 		}
 
-	// Game Over menu
-	public function setUpGameOver():Void
-		{
-			var gameOverText = new FlxText(0, 450, 0, "GAME OVER", 72);
-			gameOverText.x = FlxG.width / 2 - gameOverText.width / 2;
-			uiGameOver.add(gameOverText);
-			
-			var restartText = new FlxText(0, 550, 0, "Press 'R' to restart.", 12);
-			restartText.x = FlxG.width / 2 - restartText.width / 2;
-			uiGameOver.add(restartText);
-		}
 
 	private function makeSprite(sprite:FlxSprite, assetPath:String, spriteX:Float, spriteHeight:Float, spriteSize:Int)
 	{

@@ -51,10 +51,10 @@ class Enemy extends FlxSprite
 		enemy.kill();
     }
 
-    public static function overlapsWithPlayer(player:FlxObject, enemy:Enemy)
+    public static function overlapsWithPlayer(player:FlxObject, enemies:Enemy)
         {
             player.hurt(1);
-            enemy.kill();
+            enemies.kill();
             //FlxG.sound.play(AssetPaths.PlayerHurt__wav, .80);
         }
 }
