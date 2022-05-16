@@ -5,6 +5,8 @@ CSC303 final project
 - Overview -
 Bullet hell genre game written in Haxeflixel. Game was created for a final project and my main goal was just to gain more experience with the Haxeflixel engine and make a proper game.
 
+![GameScreenshot](https://user-images.githubusercontent.com/87043291/168586414-0d4f4cbc-9faa-4d6a-a186-de3111e3fb14.png)
+
 - Getting Started -
 To run the game, follow the steps below:
 
