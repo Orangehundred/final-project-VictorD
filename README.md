@@ -29,4 +29,5 @@ Try to survive as long as possible. Your score goes up over time and you have on
 
 - Credits and Thanks -
 Some sounds from: https://opengameart.org/content/512-sound-effects-8-bit-style
+
 Thanks to Sam Bumgardner for helping with code.
