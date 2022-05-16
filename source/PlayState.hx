@@ -73,6 +73,7 @@ class PlayState extends FlxState
 
 		add(hud.uiInitialMenu);
 		add(hud);
+
 	}
 
 	private function startGame()
@@ -83,13 +84,9 @@ class PlayState extends FlxState
 		
 	public function gameOverUI()
 	{
-		FlxG.camera.flash(FlxColor.RED, .2);
-		FlxG.camera.shake(0.01, 0.2);
-		hud.setUpGameOver();
-		
-		player.kill();
-
+		FlxG.camera.shake(0.02, 0.1, true);
 		_gameOver = true;
+
 	}
 
 	override public function update(elapsed:Float)
@@ -149,7 +146,7 @@ class PlayState extends FlxState
 		if (_gameStarted)
 			{
 			gameTimer += elapsed * 1;
-				if (gameTimer > 1)
+				if (gameTimer > 1 && !_gameOver)
 				{
 					gameTimer--;
 					hud.addScore(1);
@@ -170,6 +167,7 @@ class PlayState extends FlxState
 					FlxG.sound.play(AssetPaths.click__wav, 80); // MenuClick sound
 					FlxG.resetState();
 				}
+			}
 		// Press ENTER to fullscreen game window
 		if (FlxG.keys.justPressed.ENTER)
 		{
@@ -177,11 +175,11 @@ class PlayState extends FlxState
 		}
 
 		// End the game if the player reaches 0 lives or health
-		if (player.health <= 0)
-			{
-				FlxG.sound.play(AssetPaths.PlayerDeath__wav, 80);
-				_gameOver = true;
-			}		
+		if (player.health <= 0 && !_gameOver)
+		{
+			add(hud.uiGameOver);
+			gameOverUI();
+			FlxG.sound.play(AssetPaths.PlayerDeath__wav, 80);	
 		}
 
 		if (FlxG.mouse.justPressed)

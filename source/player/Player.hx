@@ -19,7 +19,6 @@ class Player extends FlxSprite
 		this.height = 50;
 		this.offset.x = 0;
 		this.offset.y = 0;
-		health = maxHealth;
 	}
 
 	override public function update(elapsed:Float)
@@ -56,11 +55,6 @@ class Player extends FlxSprite
 		if (isGoingOffScreenTop || isGoingOffScreenBottom) {
 			velocity.y = 0;
 		}
-	}
-
-	override function hurt(damage)
-	{
-		health -= 1;
 	}
 
 	//ADD DODGE FUNCTION?

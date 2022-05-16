@@ -5,6 +5,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
 import flixel.FlxObject;
 
+
 class CenterEnemy extends Enemy 
 {
     static private var SPEED = 75;
@@ -37,7 +38,6 @@ class CenterEnemy extends Enemy
     public static function overlapsWithPlayer(player:FlxObject, enemy:CenterEnemy)
         {
             player.hurt(1);
-            enemy.kill();
             //FlxG.sound.play(AssetPaths.PlayerHurt__wav, .80);
         }
 }
