@@ -10,9 +10,9 @@ Bullet hell genre game written in Haxeflixel. Game was created for a final proje
 - Getting Started -
 To run the game, follow the steps below:
 
-    Either play the game on your browser here: 
+    Play the game on your browser here: https://orangehundred.github.io/final-project-VictorD/
 
-    Or build and run the game on your computer by following these steps. 
+    Or, build and run the game on your computer by following these steps. 
     Ensure you have Haxe, HaxeFlixel, and OpenFL installed on your computer.
     Open a command prompt in \final-project-VictorD.
     Run the command lime test neko to build and run the executable.
