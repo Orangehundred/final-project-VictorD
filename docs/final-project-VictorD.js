@@ -912,7 +912,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "33";
+	app.meta.h["build"] = "38";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "final-project-VictorD";
 	app.meta.h["name"] = "final-project-VictorD";
@@ -4232,36 +4232,6 @@ Hud.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.uiInitialMenu.forEach(exitAnim);
 	}
 	,setUpGameOver: function() {
-		this.totalScore = Hud.score;
-		this.finalScore = new flixel_text_FlxText(0,170,0,"Final Score: " + this.totalScore,25);
-		var _this = this.finalScore;
-		var axes = flixel_util_FlxAxes.X;
-		if(axes == null) {
-			axes = flixel_util_FlxAxes.XY;
-		}
-		var tmp;
-		switch(axes._hx_index) {
-		case 0:case 2:
-			tmp = true;
-			break;
-		default:
-			tmp = false;
-		}
-		if(tmp) {
-			_this.set_x((flixel_FlxG.width - _this.get_width()) / 2);
-		}
-		var tmp;
-		switch(axes._hx_index) {
-		case 1:case 2:
-			tmp = true;
-			break;
-		default:
-			tmp = false;
-		}
-		if(tmp) {
-			_this.set_y((flixel_FlxG.height - _this.get_height()) / 2);
-		}
-		this.uiGameOver.add(this.finalScore);
 		var gameOverText = new flixel_text_FlxText(0,450,0,"GAME OVER",72);
 		var axes = flixel_util_FlxAxes.X;
 		if(axes == null) {
@@ -4947,10 +4917,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this._gameStarted = true;
 	}
 	,gameOverUI: function() {
-		flixel_FlxG.camera.flash(-65536,.2);
-		flixel_FlxG.camera.shake(0.01,0.2);
-		this.hud.setUpGameOver();
-		this.player.kill();
+		flixel_FlxG.camera.shake(0.02,0.1,null,true);
 		this._gameOver = true;
 	}
 	,update: function(elapsed) {
@@ -5002,7 +4969,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		flixel_FlxG.overlap(this.player,this.enemyGroup,enemies_Enemy.overlapsWithPlayer);
 		if(this._gameStarted) {
 			this.gameTimer += elapsed;
-			if(this.gameTimer > 1) {
+			if(this.gameTimer > 1 && !this._gameOver) {
 				this.gameTimer--;
 				this.hud.addScore(1);
 			}
@@ -5020,14 +4987,15 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 					flixel_FlxG.game._requestedState = nextState;
 				}
 			}
-			var _this = flixel_FlxG.keys.justPressed;
-			if(_this.keyManager.checkStatusUnsafe(13,_this.status)) {
-				flixel_FlxG.set_fullscreen(!flixel_FlxG.get_fullscreen());
-			}
-			if(this.player.health <= 0) {
-				flixel_FlxG.sound.play("assets/sounds/PlayerDeath.wav",80);
-				this._gameOver = true;
-			}
+		}
+		var _this = flixel_FlxG.keys.justPressed;
+		if(_this.keyManager.checkStatusUnsafe(13,_this.status)) {
+			flixel_FlxG.set_fullscreen(!flixel_FlxG.get_fullscreen());
+		}
+		if(this.player.health <= 0 && !this._gameOver) {
+			this.add(this.hud.uiGameOver);
+			this.gameOverUI();
+			flixel_FlxG.sound.play("assets/sounds/PlayerDeath.wav",80);
 		}
 		if(flixel_FlxG.mouse._leftButton.current == 2) {
 			flixel_FlxG.sound.play("assets/sounds/click.wav",80);
@@ -8494,7 +8462,6 @@ $hxClasses["enemies.CenterEnemy"] = enemies_CenterEnemy;
 enemies_CenterEnemy.__name__ = "enemies.CenterEnemy";
 enemies_CenterEnemy.overlapsWithPlayer = function(player,enemy) {
 	player.hurt(1);
-	enemy.kill();
 };
 enemies_CenterEnemy.__super__ = enemies_Enemy;
 enemies_CenterEnemy.prototype = $extend(enemies_Enemy.prototype,{
@@ -70531,7 +70498,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 554969;
+	this.version = 279895;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -117624,7 +117591,6 @@ var player_Player = function(X,Y) {
 	this.set_height(50);
 	this.offset.set_x(0);
 	this.offset.set_y(0);
-	this.health = this.maxHealth;
 };
 $hxClasses["player.Player"] = player_Player;
 player_Player.__name__ = "player.Player";
@@ -117665,9 +117631,6 @@ player_Player.prototype = $extend(flixel_FlxSprite.prototype,{
 		if(isGoingOffScreenTop || isGoingOffScreenBottom) {
 			this.velocity.set_y(0);
 		}
-	}
-	,hurt: function(damage) {
-		this.health -= 1;
 	}
 	,__class__: player_Player
 });

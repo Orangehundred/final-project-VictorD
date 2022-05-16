@@ -100,11 +100,6 @@ class Hud extends FlxTypedGroup<FlxSprite>
 
 	public function setUpGameOver():Void
 	{
-		// Final Score message
-		totalScore = score;
-		finalScore = new FlxText(0, 170, 0, "Final Score: " + totalScore, 25);
-		finalScore.screenCenter(X);
-		uiGameOver.add(finalScore);
 
 		// Game Over messages
         var gameOverText = new FlxText(0, 450, 0, "GAME OVER", 72);
