@@ -1,16 +1,17 @@
 package;
 
+import Hud;
+import player.Player;
+import enemies.Enemy;
 import enemies.RingEnemy;
 import enemies.CenterEnemy;
-import enemies.Enemy;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
-import flixel.FlxObject;
 import flixel.addons.display.FlxBackdrop;
-import player.Player;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
+import flixel.FlxObject;
 
 
 class PlayState extends FlxState
@@ -55,7 +56,7 @@ class PlayState extends FlxState
 		backdrop.velocity.set(0, 100);
 
 		// Create player
-		player = new Player(FlxG.width / 2, FlxG.height / 2);
+		player = new Player(FlxG.width / 2 - 25, FlxG.height / 2);
 
 		// Create HUD
 		hud = new Hud(player, 22, 22);
@@ -80,22 +81,22 @@ class PlayState extends FlxState
 			_gameStarted = true;
 		}
 		
-		public function gameOver()
-		{
-			FlxG.camera.flash(FlxColor.WHITE, .2);
-			FlxG.camera.shake(0.01, 0.2);
-			add(hud.uiGameOver);
-			
-			player.kill();
-	
-			_gameOver = true;
-		}
+	public function gameOverUI()
+	{
+		FlxG.camera.flash(FlxColor.RED, .2);
+		FlxG.camera.shake(0.01, 0.2);
+		hud.setUpGameOver();
+		
+		player.kill();
+
+		_gameOver = true;
+	}
 
 	override public function update(elapsed:Float)
 	{
 		// SpawnTimer of enemies
 		enemySpawnTimer += elapsed * 3;
-		if (enemySpawnTimer > 1  && Hud.score >= 20)
+		if (enemySpawnTimer > 1  && Hud.score >= 25)
 		{
 			enemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
 
@@ -107,7 +108,7 @@ class PlayState extends FlxState
 		}
 
 		centerEnemySpawnTimer += elapsed * 2;
-		if (centerEnemySpawnTimer > 1 && Hud.score >= 125)
+		if (centerEnemySpawnTimer > 1 && Hud.score >= 100)
 		{
 			centerEnemySpawnTimer = 0; //Set to 0 so no overflow of enemies spawning all at once
 
@@ -139,8 +140,8 @@ class PlayState extends FlxState
 				newRingEnemy.reset(spawnLocationX, spawnLocationY);
 				ringEnemyGroup.add(newRingEnemy);
 			}
-			
 		}
+
 		FlxG.overlap(player, ringEnemyGroup, RingEnemy.overlapsWithPlayer);
 		FlxG.overlap(player, centerEnemyGroup, CenterEnemy.overlapsWithPlayer);
 		FlxG.overlap(player, enemyGroup, Enemy.overlapsWithPlayer);
@@ -166,6 +167,7 @@ class PlayState extends FlxState
 			{
 				if (FlxG.keys.anyPressed([R]))
 				{
+					FlxG.sound.play(AssetPaths.click__wav, 80); // MenuClick sound
 					FlxG.resetState();
 				}
 		// Press ENTER to fullscreen game window
@@ -177,15 +179,14 @@ class PlayState extends FlxState
 		// End the game if the player reaches 0 lives or health
 		if (player.health <= 0)
 			{
-				//FlxG.sound.play(AssetPaths.PlayerDeath__wav, 100);
+				FlxG.sound.play(AssetPaths.PlayerDeath__wav, 80);
 				_gameOver = true;
-				player.kill();
-				{
-					//FlxG.switchState(new GameOverState());
-				}
 			}		
-
-	
 		}
+
+		if (FlxG.mouse.justPressed)
+			{
+				FlxG.sound.play(AssetPaths.click__wav, 80); // MenuClick sound
+			}
 	}
 }

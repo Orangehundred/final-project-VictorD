@@ -18,6 +18,10 @@ class Hud extends FlxTypedGroup<FlxSprite>
 	var scoreLabel:FlxText;
 	var scoreCounter:FlxText;
 
+	//SetUpGameOver
+	var totalScore:Int;
+	var finalScore:FlxText;
+
 	public var uiInitialMenu:FlxTypedGroup<FlxText>;
 	public var uiGameOver:FlxTypedGroup<FlxText>;
 
@@ -83,28 +87,34 @@ class Hud extends FlxTypedGroup<FlxSprite>
 
 	// Hide Main Menu Overlay when game starts
 	public function hideInitialMenu():Void
+	{
+		var exitAnim = function(text:FlxText) 
 		{
-			var exitAnim = function(text:FlxText) 
-			{
-				var y = text.y;
-				var kill = function(_){text.kill(); };
-				FlxTween.tween(text, {alpha: 0, y: y - 4}, .3, {onComplete:kill}); 	
-			};
-			
-			uiInitialMenu.forEach(exitAnim);
-		}
+			var y = text.y;
+			var kill = function(_){text.kill(); };
+			FlxTween.tween(text, {alpha: 0, y: y - 4}, .3, {onComplete:kill}); 	
+		};
+		
+		uiInitialMenu.forEach(exitAnim);
+	}
 
-	// Game Over menu
 	public function setUpGameOver():Void
-		{
-			var gameOverText = new FlxText(0, 450, 0, "GAME OVER", 72);
-			gameOverText.x = FlxG.width / 2 - gameOverText.width / 2;
-			uiGameOver.add(gameOverText);
-			
-			var restartText = new FlxText(0, 550, 0, "Press 'R' to restart.", 12);
-			restartText.x = FlxG.width / 2 - restartText.width / 2;
-			uiGameOver.add(restartText);
-		}
+	{
+		// Final Score message
+		totalScore = score;
+		finalScore = new FlxText(0, 170, 0, "Final Score: " + totalScore, 25);
+		finalScore.screenCenter(X);
+		uiGameOver.add(finalScore);
+
+		// Game Over messages
+        var gameOverText = new FlxText(0, 450, 0, "GAME OVER", 72);
+        gameOverText.screenCenter(X);
+        uiGameOver.add(gameOverText);
+        
+        var restartText = new FlxText(0, 550, 0, "Press 'R' to restart.", 25);
+        restartText.screenCenter(X);
+        uiGameOver.add(restartText);
+	}
 
 	private function makeSprite(sprite:FlxSprite, assetPath:String, spriteX:Float, spriteHeight:Float, spriteSize:Int)
 	{

@@ -34,7 +34,7 @@ class CenterEnemy extends Enemy
         return wouldParentBeKilled || getMidpoint().distanceTo(centerScreen) < 2;//overlapsPoint(centerScreen);
     }
 
-    public static function overlapsWithPlayer(player:FlxObject, enemy:Enemy)
+    public static function overlapsWithPlayer(player:FlxObject, enemy)
         {
             player.hurt(1);
             enemy.kill();
