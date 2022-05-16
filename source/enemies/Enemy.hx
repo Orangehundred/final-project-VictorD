@@ -1,8 +1,5 @@
 package enemies;
 
-import flixel.math.FlxPoint;
-import flixel.math.FlxVelocity;
-import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import player.Player;
@@ -48,13 +45,15 @@ class Enemy extends FlxSprite
     // If Enemy overlaps center of screen
     public static function overlapsWithCenter(center:FlxObject, enemy:Enemy)
     {
-		enemy.kill();
+        enemy.kill();
     }
 
-    public static function overlapsWithPlayer(player:FlxObject, enemies:Enemy)
+    public static function overlapsWithPlayer(player:FlxObject, enemy:Enemy)
         {
             player.hurt(1);
-            enemies.kill();
+            enemy.kill();
             //FlxG.sound.play(AssetPaths.PlayerHurt__wav, .80);
         }
+
+
 }

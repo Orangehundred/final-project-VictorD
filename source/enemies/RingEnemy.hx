@@ -22,10 +22,10 @@ class RingEnemy extends CenterEnemy {
         FlxVelocity.moveTowardsPoint(this, centerScreen, SPEED);
     }
 
-    public static function overlapsWithPlayer(player:FlxObject, enemies:Enemy)
+    public static function overlapsWithPlayer(player:FlxObject, enemy)
         {
             player.hurt(1);
-            enemies.kill();
+            enemy.kill();
             //FlxG.sound.play(AssetPaths.PlayerHurt__wav, .80);
         }
 }
