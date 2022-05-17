@@ -2,13 +2,26 @@ package player;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import flixel.util.FlxTimer;
+import flixel.addons.effects.FlxTrail;
 
 class Player extends FlxSprite
 {
-	public static var SPEED(default, never):Int = 200;
-
+	public var SPEED:Int = 200;
 	public var maxHealth:Int = 1;
 	public var damage:Int;
+
+
+
+	// Dash variables
+	public var dashValue:Int = 100;
+	public var dashCooldown:FlxTimer = new FlxTimer();
+	public var speedChange:FlxTimer = new FlxTimer();
+	public var trailOffTimer:FlxTimer = new FlxTimer();
+	public var canDash:Bool = true;
+	public var isDashing:Bool;
+	public var trail:FlxTrail;
 
 	public function new(X:Float = 0, Y:Float = 0)
 	{
@@ -57,5 +70,64 @@ class Player extends FlxSprite
 		}
 	}
 
-	//ADD DODGE FUNCTION?
+	private function resetSPEED(timer:FlxTimer)
+		{
+			// Toggle isDashing
+			isDashing = false;
+			// Reset speed
+			SPEED = 200;
+		}
+	
+	private function boostSPEED()
+		{
+			// Toggle isDashing
+			isDashing = true;
+			// Change speed
+			SPEED = SPEED * 5;
+			// Start timer 0.08
+			speedChange.start(0.08, resetSPEED, 1);
+		}
+	
+		public function trailOn()
+		{
+			trail.revive();
+			trail.resetTrail();
+		}
+	
+		private function trailOff(timer:FlxTimer)
+		{
+			trail.kill();
+		}
+	
+		private function resetDash(timer:FlxTimer)
+		{
+			canDash = true;
+			dashValue = 1;
+		}
+	
+		public function isDashReady():Bool
+		{
+			return canDash;
+		}
+	
+		private function dash()
+		{
+			if (canDash && FlxG.keys.pressed.X)
+			{
+				// Call boostSPEED
+				boostSPEED();
+				// Start trail
+				trailOn();
+				// Turn trail off timer
+				trailOffTimer.start(0.08, trailOff, 1);
+				// Toggle canDash
+				canDash = false;
+				// Set bar value
+				dashValue = 0;
+				// Reset dashCooldown
+				dashCooldown.start(1.75, resetDash, 1);
+			}
+		}
 }
+
+
