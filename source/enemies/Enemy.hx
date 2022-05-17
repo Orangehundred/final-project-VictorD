@@ -2,7 +2,6 @@ package enemies;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import player.Player;
 
 
 class Enemy extends FlxSprite
