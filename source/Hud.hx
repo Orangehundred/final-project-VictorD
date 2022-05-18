@@ -117,7 +117,7 @@ class Hud extends FlxTypedGroup<FlxSprite>
         uiGameOver.add(gameOverText);
 		
         
-        var restartText = new FlxText(0, 550, 0, "Press 'R' to restart.", 25);
+        var restartText = new FlxText(0, 550, 0, "Press 'R' to restart", 25);
         restartText.screenCenter(X);
         uiGameOver.add(restartText);
 	}
