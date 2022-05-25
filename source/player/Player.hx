@@ -5,10 +5,10 @@ import flixel.FlxSprite;
 
 class Player extends FlxSprite
 {
-	public static var SPEED(default, never):Int = 200;
-
+	public var SPEED(default, never):Int = 200;
 	public var maxHealth:Int = 1;
 	public var damage:Int;
+
 
 	public function new(X:Float = 0, Y:Float = 0)
 	{
@@ -56,6 +56,6 @@ class Player extends FlxSprite
 			velocity.y = 0;
 		}
 	}
-
-	//ADD DODGE FUNCTION?
 }
+
+

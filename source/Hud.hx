@@ -61,12 +61,20 @@ class Hud extends FlxTypedGroup<FlxSprite>
 	{
 		var titleText = new FlxText(0, 65, 0, "BULLETHELL GAME", 48);
 		titleText.x = FlxG.width / 2 - titleText.width / 2;
+		titleText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		uiInitialMenu.add(titleText);
 		
 		var byLine = new FlxText(0, 150, 0, "by Victor Duchscherer", 20);
 		byLine.x = FlxG.width / 2 - byLine.width / 2;
 		uiInitialMenu.add(byLine);
 		
+		var canYOU = new FlxText(0, 200, 0, "Can you get past score 100?", 13);
+		canYOU.x = FlxG.width * 0.75;
+		canYOU.angle = 20;
+		canYOU.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 1);
+		canYOU.color = FlxColor.ORANGE;
+		uiInitialMenu.add(canYOU);
+
 		
 		var center = player.getMidpoint();
 		
@@ -104,9 +112,12 @@ class Hud extends FlxTypedGroup<FlxSprite>
 		// Game Over messages
         var gameOverText = new FlxText(0, 450, 0, "GAME OVER", 72);
         gameOverText.screenCenter(X);
+		gameOverText.color = FlxColor.RED;
+		gameOverText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
         uiGameOver.add(gameOverText);
+		
         
-        var restartText = new FlxText(0, 550, 0, "Press 'R' to restart.", 25);
+        var restartText = new FlxText(0, 550, 0, "Press 'R' to restart", 25);
         restartText.screenCenter(X);
         uiGameOver.add(restartText);
 	}

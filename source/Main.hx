@@ -1,8 +1,6 @@
 package;
 
 import flixel.FlxGame;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.TransitionData;
 import openfl.display.Sprite;
 
 class Main extends Sprite

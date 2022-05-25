@@ -183,8 +183,8 @@ class PlayState extends FlxState
 		}
 
 		if (FlxG.mouse.justPressed)
-			{
-				FlxG.sound.play(AssetPaths.click__wav, 80); // MenuClick sound
-			}
+		{
+			FlxG.sound.play(AssetPaths.click__wav, 80); // MenuClick sound
+		}
 	}
 }
